@@ -1,0 +1,157 @@
+//Binary Search Tree
+#include <iostream>
+
+using namespace std;
+
+struct Node {
+	Node* left;
+	Node* right;
+	int data;
+} *root = NULL;
+
+void Insert(int key){
+	if (root == NULL){
+		root = new Node();
+		root->data = key;
+		root->left = root->right = NULL;
+		return;
+	}
+
+	Node* t = root;
+	Node* r = NULL;
+	while (t != NULL){
+		r = t;
+		if (key > t->data)
+		{
+			t = t->right;
+		}
+		else if (key < t->data)
+		{
+			t = t->left;
+		}
+		else 
+			return;
+	}
+
+	Node* p = new Node;
+	p->data = key;
+	p->left = p->right = NULL;
+	if (key > r->data){
+		r->right = p;
+	}
+	else
+		r->left = p;
+}
+
+Node* Search(int key){
+	Node* t = root;
+	while (t){
+		if (key < t->data)
+			t = t->left;
+		else if (key > t->data)
+			t = t->right;
+		else
+			break;
+	}
+
+	if (t){
+		cout << "\nKey " << key << " is found: " << t->data;
+	}
+	else {
+		cout << "\nKey " << key << " is not found.";
+	}
+	return t;
+}
+
+int Height(Node* p){
+	if (!p)
+		return 0;
+	int x = 0;
+	int y = 0;
+	if (p) {
+		x = Height(p->right);
+		y = Height(p->left);
+		if (x > y)
+			return x + 1;
+		else
+			return y + 1;
+	}
+}
+
+Node* InPredecessor(Node* p){
+	while (p && p->left){
+		p = p->left;
+	}
+	return p;
+}
+
+Node* InSuccessor(Node* p){
+	while (p && p->right){
+		p = p->right;
+	}
+	return p;
+}
+
+
+Node* Delete(Node *p, int key)
+{
+	Node* t = NULL;
+	if (p == NULL)
+		return NULL;
+	if (p->left == NULL && p->right == NULL && p->data == key)
+	{
+		if (p == root)
+			root == NULL;
+		delete p;
+		return NULL;
+	}
+	if (key < p->data)
+		p->left = Delete(p->left, key);
+	else if (key > p->data)
+		p->right= Delete(p->right, key);
+	else
+	{
+		if (Height(p->left) > Height(p ->right))
+		{
+			t = InPredecessor(p->left);
+			p->data = t->data;
+			p->left = Delete(p->left, t->data);
+		}
+		else
+		{
+			t = InSuccessor(p->right);
+			p->data = t->data;
+			p->right = Delete(p->right, t->data);
+		}
+	}
+	return p;
+}
+
+void Inorder(Node* p)
+{
+	if (p)
+	{
+		Inorder(p->left);
+		cout << p->data << " ";
+		Inorder(p->right);
+	}
+}
+
+int main()
+{
+	Insert(10);
+	Insert(20);
+	Insert(50);
+	Insert(6);
+	Insert(1);
+	Insert(3);
+	Inorder(root);
+
+	Search(50);
+
+	Delete(root, 50);
+	cout << "\n";
+	Inorder(root);
+
+	return 0;
+}
